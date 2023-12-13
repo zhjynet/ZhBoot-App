@@ -3,6 +3,8 @@ package com.ruoyi.homeip.service;
 import java.util.List;
 import com.ruoyi.homeip.domain.HomeIp;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * IP地址Service接口
  * 
@@ -35,6 +37,13 @@ public interface IHomeIpService
      */
     public int insertHomeIp(HomeIp homeIp);
 
+    /**
+     * 新增IP地址
+     *
+     * @param homeIp IP地址
+     * @return 结果
+     */
+    public boolean insertHomeIpServlet(String homeName);
     /**
      * 修改IP地址
      * 

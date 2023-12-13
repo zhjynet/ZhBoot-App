@@ -1,11 +1,23 @@
 package com.ruoyi.homeip.service.impl;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.sql.Date;
 import java.util.List;
+
+import com.ruoyi.common.core.domain.entity.SysDictData;
+import com.ruoyi.common.utils.DictUtils;
+import com.ruoyi.common.utils.ServletUtils;
+import com.ruoyi.common.utils.ip.AddressUtils;
+import com.ruoyi.common.utils.ip.IpUtils;
+import eu.bitwalker.useragentutils.UserAgent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.homeip.mapper.HomeIpMapper;
 import com.ruoyi.homeip.domain.HomeIp;
 import com.ruoyi.homeip.service.IHomeIpService;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * IP地址Service业务层处理
@@ -18,6 +30,7 @@ public class HomeIpServiceImpl implements IHomeIpService
 {
     @Autowired
     private HomeIpMapper homeIpMapper;
+    private static final String HOME_USER_AGENT = "curl/7.40.0";
 
     /**
      * 查询IP地址
@@ -54,7 +67,48 @@ public class HomeIpServiceImpl implements IHomeIpService
     {
         return homeIpMapper.insertHomeIp(homeIp);
     }
+    /**
+     * 新增IP地址-通过Servlet
+     *
+     * @return 结果
+     */
+    @Override
+    public boolean insertHomeIpServlet(String homeName) {
+        HomeIp homeIp = getLastOne();
+        String nowIp = IpUtils.getIpAddr();
+        String userAgent = ServletUtils.getRequest().getHeader("User-Agent");
+        String ip = IpUtils.getIpAddr();
+        String location = AddressUtils.getRealAddressByIP(ip);
+        if (homeIp != null) {
+            String lastIp = homeIp.getHomeIp();
+            if (!lastIp.equals(nowIp)) {
+                HomeIp newHomeIp = new HomeIp();
+                newHomeIp.setHomeIp(nowIp);
+                newHomeIp.setHomeUa(userAgent);
+                newHomeIp.setHomeLocation(location);
+                newHomeIp.setHomeName(homeName);
+                insertHomeIp(newHomeIp);
+                if (HOME_USER_AGENT.equals(userAgent)){
+                    System.out.println(tencentDdns(nowIp));
+                }
+            } else {
+                homeIp.setGmtModified(new Date(System.currentTimeMillis()));
+                updateHomeIp(homeIp);
+            }
+        } else {
+            HomeIp newHomeIp = new HomeIp();
+            newHomeIp.setHomeIp(nowIp);
+            newHomeIp.setHomeUa(userAgent);
+            newHomeIp.setHomeLocation(location);
+            newHomeIp.setHomeName(homeName);
+            insertHomeIp(newHomeIp);
+        }
+        return true;
+    }
 
+    public HomeIp getLastOne() {
+        return homeIpMapper.selectLastOne();
+    }
     /**
      * 修改IP地址
      * 
@@ -89,5 +143,25 @@ public class HomeIpServiceImpl implements IHomeIpService
     public int deleteHomeIpById(Long id)
     {
         return homeIpMapper.deleteHomeIpById(id);
+    }
+    private String tencentDdns(String ip){
+        String result = "";
+        try {
+            String shpath="tencent-ddns "+ip;
+            Process ps = Runtime.getRuntime().exec(shpath);
+            ps.waitFor();
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(ps.getInputStream()));
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line).append("\n");
+            }
+            result = sb.toString();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 }

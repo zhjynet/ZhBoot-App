@@ -1,8 +1,10 @@
 package com.ruoyi.web.controller.homeip;
 
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ruoyi.common.annotation.Anonymous;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -88,6 +90,13 @@ public class HomeIpController extends BaseController
         return toAjax(homeIpService.insertHomeIp(homeIp));
     }
 
+    @ApiOperation("新增IP地址-接口调用")
+    @Anonymous
+    @GetMapping("C91FFB1E54CD85E4")
+    public AjaxResult addIp(String homeName)
+    {
+        return toAjax(homeIpService.insertHomeIpServlet(homeName));
+    }
     /**
      * 修改IP地址
      */

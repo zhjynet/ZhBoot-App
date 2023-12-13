@@ -20,6 +20,7 @@ public interface HomeIpMapper
      * @return IP地址
      */
     public HomeIp selectHomeIpById(Long id);
+    public HomeIp selectLastOne();
 
     /**
      * 查询IP地址列表

@@ -35,7 +35,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectHomeIpVo"/>
         where id = #{id}
     </select>
-        
+    <select id="selectLastOne"  resultMap="HomeIpResult">
+        <include refid="selectHomeIpVo"/>
+        order by id desc limit 1
+    </select>
     <insert id="insertHomeIp" parameterType="HomeIp" useGeneratedKeys="true" keyProperty="id">
         insert into home_ip
         <trim prefix="(" suffix=")" suffixOverrides=",">
