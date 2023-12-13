@@ -162,6 +162,12 @@
                 <artifactId>ruoyi-system</artifactId>
                 <version>${ruoyi.version}</version>
             </dependency>
+            <!-- zhboot个人应用开发模块-->
+            <dependency>
+                <groupId>com.ruoyi</groupId>
+                <artifactId>ruoyi-zhboot</artifactId>
+                <version>${ruoyi.version}</version>
+            </dependency>
 
             <!-- 通用工具-->
             <dependency>
@@ -180,6 +186,7 @@
         <module>ruoyi-quartz</module>
         <module>ruoyi-generator</module>
         <module>ruoyi-common</module>
+        <module>ruoyi-zhboot</module>
     </modules>
     <packaging>pom</packaging>
 

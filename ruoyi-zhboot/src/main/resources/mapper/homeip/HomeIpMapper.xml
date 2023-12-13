@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.homeip.mapper.HomeIpMapper">
+    
+    <resultMap type="HomeIp" id="HomeIpResult">
+        <result property="id"    column="id"    />
+        <result property="homeName"    column="home_name"    />
+        <result property="homeIp"    column="home_ip"    />
+        <result property="homeUa"    column="home_ua"    />
+        <result property="homeLocation"    column="home_location"    />
+        <result property="gmtCreat"    column="gmt_creat"    />
+        <result property="gmtModified"    column="gmt_modified"    />
+    </resultMap>
+
+    <sql id="selectHomeIpVo">
+        select id, home_name, home_ip, home_ua, home_location, gmt_creat, gmt_modified from home_ip
+    </sql>
+
+    <select id="selectHomeIpList" parameterType="HomeIp" resultMap="HomeIpResult">
+        <include refid="selectHomeIpVo"/>
+        <where>  
+            <if test="homeName != null  and homeName != ''"> and home_name like concat('%', #{homeName}, '%')</if>
+            <if test="homeIp != null  and homeIp != ''"> and home_ip = #{homeIp}</if>
+            <if test="homeUa != null  and homeUa != ''"> and home_ua = #{homeUa}</if>
+            <if test="homeLocation != null  and homeLocation != ''"> and home_location = #{homeLocation}</if>
+            <if test="gmtCreat != null "> and gmt_creat = #{gmtCreat}</if>
+            <if test="gmtModified != null "> and gmt_modified = #{gmtModified}</if>
+        </where>
+        order by id desc
+    </select>
+    
+    <select id="selectHomeIpById" parameterType="Long" resultMap="HomeIpResult">
+        <include refid="selectHomeIpVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertHomeIp" parameterType="HomeIp" useGeneratedKeys="true" keyProperty="id">
+        insert into home_ip
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="homeName != null">home_name,</if>
+            <if test="homeIp != null">home_ip,</if>
+            <if test="homeUa != null">home_ua,</if>
+            <if test="homeLocation != null">home_location,</if>
+            <if test="gmtCreat != null">gmt_creat,</if>
+            <if test="gmtModified != null">gmt_modified,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="homeName != null">#{homeName},</if>
+            <if test="homeIp != null">#{homeIp},</if>
+            <if test="homeUa != null">#{homeUa},</if>
+            <if test="homeLocation != null">#{homeLocation},</if>
+            <if test="gmtCreat != null">#{gmtCreat},</if>
+            <if test="gmtModified != null">#{gmtModified},</if>
+         </trim>
+    </insert>
+
+    <update id="updateHomeIp" parameterType="HomeIp">
+        update home_ip
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="homeName != null">home_name = #{homeName},</if>
+            <if test="homeIp != null">home_ip = #{homeIp},</if>
+            <if test="homeUa != null">home_ua = #{homeUa},</if>
+            <if test="homeLocation != null">home_location = #{homeLocation},</if>
+            <if test="gmtCreat != null">gmt_creat = #{gmtCreat},</if>
+            <if test="gmtModified != null">gmt_modified = #{gmtModified},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteHomeIpById" parameterType="Long">
+        delete from home_ip where id = #{id}
+    </delete>
+
+    <delete id="deleteHomeIpByIds" parameterType="String">
+        delete from home_ip where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
