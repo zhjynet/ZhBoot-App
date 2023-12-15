@@ -5,68 +5,68 @@ import java.io.InputStreamReader;
 import java.sql.Date;
 import java.util.List;
 
-import com.ruoyi.common.core.domain.entity.SysDictData;
-import com.ruoyi.common.utils.DictUtils;
 import com.ruoyi.common.utils.ServletUtils;
 import com.ruoyi.common.utils.ip.AddressUtils;
 import com.ruoyi.common.utils.ip.IpUtils;
-import eu.bitwalker.useragentutils.UserAgent;
+import com.ruoyi.homeip.service.ITencentCloudService;
+import com.ruoyi.system.service.ISysConfigService;
+import com.tencentcloudapi.dnspod.v20210323.models.ModifyRecordRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.homeip.mapper.HomeIpMapper;
 import com.ruoyi.homeip.domain.HomeIp;
 import com.ruoyi.homeip.service.IHomeIpService;
 
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * IP地址Service业务层处理
- * 
+ *
  * @author zhangjy
  * @date 2023-12-13
  */
 @Service
-public class HomeIpServiceImpl implements IHomeIpService 
-{
+public class HomeIpServiceImpl implements IHomeIpService {
     @Autowired
     private HomeIpMapper homeIpMapper;
+    @Autowired
+    private ITencentCloudService tencentCloudService;
+    @Autowired
+    private ISysConfigService configService;
     private static final String HOME_USER_AGENT = "curl/7.40.0";
 
     /**
      * 查询IP地址
-     * 
+     *
      * @param id IP地址主键
      * @return IP地址
      */
     @Override
-    public HomeIp selectHomeIpById(Long id)
-    {
+    public HomeIp selectHomeIpById(Long id) {
         return homeIpMapper.selectHomeIpById(id);
     }
 
     /**
      * 查询IP地址列表
-     * 
+     *
      * @param homeIp IP地址
      * @return IP地址
      */
     @Override
-    public List<HomeIp> selectHomeIpList(HomeIp homeIp)
-    {
+    public List<HomeIp> selectHomeIpList(HomeIp homeIp) {
         return homeIpMapper.selectHomeIpList(homeIp);
     }
 
     /**
      * 新增IP地址
-     * 
+     *
      * @param homeIp IP地址
      * @return 结果
      */
     @Override
-    public int insertHomeIp(HomeIp homeIp)
-    {
+    public int insertHomeIp(HomeIp homeIp) {
         return homeIpMapper.insertHomeIp(homeIp);
     }
+
     /**
      * 新增IP地址-通过Servlet
      *
@@ -88,11 +88,20 @@ public class HomeIpServiceImpl implements IHomeIpService
                 newHomeIp.setHomeLocation(location);
                 newHomeIp.setHomeName(homeName);
                 insertHomeIp(newHomeIp);
-                if (HOME_USER_AGENT.equals(userAgent)){
-                    System.out.println(tencentDdns(nowIp));
+                if (HOME_USER_AGENT.equals(userAgent)) {
+                    ModifyRecordRequest req = new ModifyRecordRequest();
+                    req.setDomain(configService.selectConfigByKey("tencent.cloud.domain.zh"));
+                    req.setSubDomain("home");
+                    req.setRecordType("A");
+                    req.setRecordLine("默认");
+                    req.setValue(nowIp);
+                    req.setRecordId(281551793L);
+                    tencentCloudService.modifyRecord(req);
+                    //System.out.println(tencentDdns(nowIp));
                 }
             } else {
                 homeIp.setGmtModified(new Date(System.currentTimeMillis()));
+                homeIp.setHomeName(homeName);
                 updateHomeIp(homeIp);
             }
         } else {
@@ -109,45 +118,44 @@ public class HomeIpServiceImpl implements IHomeIpService
     public HomeIp getLastOne() {
         return homeIpMapper.selectLastOne();
     }
+
     /**
      * 修改IP地址
-     * 
+     *
      * @param homeIp IP地址
      * @return 结果
      */
     @Override
-    public int updateHomeIp(HomeIp homeIp)
-    {
+    public int updateHomeIp(HomeIp homeIp) {
         return homeIpMapper.updateHomeIp(homeIp);
     }
 
     /**
      * 批量删除IP地址
-     * 
+     *
      * @param ids 需要删除的IP地址主键
      * @return 结果
      */
     @Override
-    public int deleteHomeIpByIds(Long[] ids)
-    {
+    public int deleteHomeIpByIds(Long[] ids) {
         return homeIpMapper.deleteHomeIpByIds(ids);
     }
 
     /**
      * 删除IP地址信息
-     * 
+     *
      * @param id IP地址主键
      * @return 结果
      */
     @Override
-    public int deleteHomeIpById(Long id)
-    {
+    public int deleteHomeIpById(Long id) {
         return homeIpMapper.deleteHomeIpById(id);
     }
-    private String tencentDdns(String ip){
+
+    private String tencentDdns(String ip) {
         String result = "";
         try {
-            String shpath="tencent-ddns "+ip;
+            String shpath = "tencent-ddns " + ip;
             Process ps = Runtime.getRuntime().exec(shpath);
             ps.waitFor();
 
@@ -158,8 +166,7 @@ public class HomeIpServiceImpl implements IHomeIpService
                 sb.append(line).append("\n");
             }
             result = sb.toString();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return result;
