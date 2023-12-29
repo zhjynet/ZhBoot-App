@@ -78,14 +78,13 @@ public class HomeIpServiceImpl implements IHomeIpService {
         String nowIp = IpUtils.getIpAddr();
         String userAgent = ServletUtils.getRequest().getHeader("User-Agent");
         String ip = IpUtils.getIpAddr();
-        String location = AddressUtils.getRealAddressByIP(ip);
         if (homeIp != null) {
             String lastIp = homeIp.getHomeIp();
             if (!lastIp.equals(nowIp)) {
                 HomeIp newHomeIp = new HomeIp();
                 newHomeIp.setHomeIp(nowIp);
                 newHomeIp.setHomeUa(userAgent);
-                newHomeIp.setHomeLocation(location);
+                newHomeIp.setHomeLocation(AddressUtils.getRealAddressByIP(ip));
                 newHomeIp.setHomeName(homeName);
                 insertHomeIp(newHomeIp);
                 if (HOME_USER_AGENT.equals(userAgent)) {
@@ -108,7 +107,7 @@ public class HomeIpServiceImpl implements IHomeIpService {
             HomeIp newHomeIp = new HomeIp();
             newHomeIp.setHomeIp(nowIp);
             newHomeIp.setHomeUa(userAgent);
-            newHomeIp.setHomeLocation(location);
+            newHomeIp.setHomeLocation(AddressUtils.getRealAddressByIP(ip));
             newHomeIp.setHomeName(homeName);
             insertHomeIp(newHomeIp);
         }
