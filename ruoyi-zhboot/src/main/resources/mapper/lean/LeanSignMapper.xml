@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.lean.mapper.LeanSignMapper">
+    
+    <resultMap type="LeanSign" id="LeanSignResult">
+        <result property="id"    column="id"    />
+        <result property="userLoginNo"    column="user_login_no"    />
+        <result property="userSessionId"    column="user_session_id"    />
+        <result property="userSignUrl"    column="user_sign_url"    />
+        <result property="gmtCreat"    column="gmt_creat"    />
+        <result property="gmtModified"    column="gmt_modified"    />
+    </resultMap>
+
+    <sql id="selectLeanSignVo">
+        select id, user_login_no, user_session_id, user_sign_url, gmt_creat, gmt_modified from lean_sign
+    </sql>
+
+    <select id="selectLeanSignList" parameterType="LeanSign" resultMap="LeanSignResult">
+        <include refid="selectLeanSignVo"/>
+        <where>  
+            <if test="userLoginNo != null  and userLoginNo != ''"> and user_login_no = #{userLoginNo}</if>
+            <if test="userSessionId != null  and userSessionId != ''"> and user_session_id = #{userSessionId}</if>
+            <if test="userSignUrl != null  and userSignUrl != ''"> and user_sign_url = #{userSignUrl}</if>
+            <if test="gmtCreat != null "> and gmt_creat = #{gmtCreat}</if>
+            <if test="gmtModified != null "> and gmt_modified = #{gmtModified}</if>
+        </where>
+    </select>
+    
+    <select id="selectLeanSignById" parameterType="Long" resultMap="LeanSignResult">
+        <include refid="selectLeanSignVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectLeanSignByUserLoginNo" parameterType="String" resultMap="LeanSignResult">
+        <include refid="selectLeanSignVo"/>
+        where user_login_no = #{userLoginNo} order by id desc limit 1
+    </select>
+        
+    <insert id="insertLeanSign" parameterType="LeanSign" useGeneratedKeys="true" keyProperty="id">
+        insert into lean_sign
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userLoginNo != null">user_login_no,</if>
+            <if test="userSessionId != null">user_session_id,</if>
+            <if test="userSignUrl != null">user_sign_url,</if>
+            <if test="gmtCreat != null">gmt_creat,</if>
+            <if test="gmtModified != null">gmt_modified,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userLoginNo != null">#{userLoginNo},</if>
+            <if test="userSessionId != null">#{userSessionId},</if>
+            <if test="userSignUrl != null">#{userSignUrl},</if>
+            <if test="gmtCreat != null">#{gmtCreat},</if>
+            <if test="gmtModified != null">#{gmtModified},</if>
+         </trim>
+    </insert>
+
+    <update id="updateLeanSign" parameterType="LeanSign">
+        update lean_sign
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userLoginNo != null">user_login_no = #{userLoginNo},</if>
+            <if test="userSessionId != null">user_session_id = #{userSessionId},</if>
+            <if test="userSignUrl != null">user_sign_url = #{userSignUrl},</if>
+            <if test="gmtCreat != null">gmt_creat = #{gmtCreat},</if>
+            <if test="gmtModified != null">gmt_modified = #{gmtModified},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteLeanSignById" parameterType="Long">
+        delete from lean_sign where id = #{id}
+    </delete>
+
+    <delete id="deleteLeanSignByIds" parameterType="String">
+        delete from lean_sign where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

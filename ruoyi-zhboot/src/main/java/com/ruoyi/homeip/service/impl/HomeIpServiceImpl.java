@@ -96,7 +96,6 @@ public class HomeIpServiceImpl implements IHomeIpService {
                     req.setValue(nowIp);
                     req.setRecordId(281551793L);
                     tencentCloudService.modifyRecord(req);
-                    //System.out.println(tencentDdns(nowIp));
                 }
             } else {
                 homeIp.setGmtModified(new Date(System.currentTimeMillis()));

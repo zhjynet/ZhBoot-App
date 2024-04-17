@@ -4,6 +4,8 @@ import com.alibaba.fastjson2.JSONObject;
 import com.ruoyi.homeip.service.ITencentCloudService;
 import com.ruoyi.system.service.ISysConfigService;
 import com.tencentcloudapi.common.exception.TencentCloudSDKException;
+import com.tencentcloudapi.dnspod.v20210323.models.DescribeRecordListRequest;
+import com.tencentcloudapi.dnspod.v20210323.models.DescribeRecordListResponse;
 import com.tencentcloudapi.dnspod.v20210323.models.ModifyRecordResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,13 +53,27 @@ public class TencentCloudServiceImpl implements ITencentCloudService {
     public ModifyRecordResponse modifyRecord(ModifyRecordRequest req) {
         DnspodClient client = createClient();
         // 返回的resp是一个ModifyRecordResponse的实例，与请求对象对应
-        ModifyRecordResponse resp = null;
+        ModifyRecordResponse resp;
         try {
             resp = client.ModifyRecord(req);
         } catch (TencentCloudSDKException e) {
             throw new RuntimeException(e);
         }
         log.info("modifyRecord:resq{}", JSONObject.toJSONString(resp));
+        // 输出json格式的字符串回包
+        return resp;
+    }
+
+    public DescribeRecordListResponse describeRecordList(DescribeRecordListRequest req) {
+        DnspodClient client = createClient();
+        // 返回的resp是一个DescribeRecordListResponse的实例，与请求对象对应
+        DescribeRecordListResponse resp;
+        try {
+            resp = client.DescribeRecordList(req);
+        } catch (TencentCloudSDKException e) {
+            throw new RuntimeException(e);
+        }
+        log.info("describeRecordList:resq{}", JSONObject.toJSONString(resp));
         // 输出json格式的字符串回包
         return resp;
     }

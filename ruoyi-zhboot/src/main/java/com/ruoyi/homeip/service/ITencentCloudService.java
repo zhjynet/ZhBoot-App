@@ -1,5 +1,7 @@
 package com.ruoyi.homeip.service;
 
+import com.tencentcloudapi.dnspod.v20210323.models.DescribeRecordListRequest;
+import com.tencentcloudapi.dnspod.v20210323.models.DescribeRecordListResponse;
 import com.tencentcloudapi.dnspod.v20210323.models.ModifyRecordRequest;
 import com.tencentcloudapi.dnspod.v20210323.models.ModifyRecordResponse;
 
@@ -13,4 +15,5 @@ import com.tencentcloudapi.dnspod.v20210323.models.ModifyRecordResponse;
  **/
 public interface ITencentCloudService {
     public ModifyRecordResponse modifyRecord(ModifyRecordRequest req);
+    public DescribeRecordListResponse describeRecordList(DescribeRecordListRequest req);
 }

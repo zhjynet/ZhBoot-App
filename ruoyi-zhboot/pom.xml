@@ -27,6 +27,14 @@
             <artifactId>tencentcloud-sdk-java-dnspod</artifactId>
             <version>3.1.906</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
 
     </dependencies>
 
