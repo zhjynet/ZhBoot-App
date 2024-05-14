@@ -26,6 +26,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="gmtCreat != null "> and gmt_creat = #{gmtCreat}</if>
             <if test="gmtModified != null "> and gmt_modified = #{gmtModified}</if>
         </where>
+        order by id desc
     </select>
     
     <select id="selectLeanSignById" parameterType="Long" resultMap="LeanSignResult">
