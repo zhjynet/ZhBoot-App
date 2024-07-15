@@ -32,7 +32,7 @@ public class HomeIpServiceImpl implements IHomeIpService {
     private ITencentCloudService tencentCloudService;
     @Autowired
     private ISysConfigService configService;
-    private static final String HOME_USER_AGENT = "curl/7.40.0";
+    private static final String HOME_USER_AGENT = "HOME/1.0";
 
     /**
      * 查询IP地址
