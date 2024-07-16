@@ -10,6 +10,7 @@ import com.ruoyi.common.utils.ip.AddressUtils;
 import com.ruoyi.common.utils.ip.IpUtils;
 import com.ruoyi.homeip.service.ITencentCloudService;
 import com.ruoyi.system.service.ISysConfigService;
+import com.ruoyi.system.service.ISysDictDataService;
 import com.tencentcloudapi.dnspod.v20210323.models.ModifyRecordRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,8 @@ public class HomeIpServiceImpl implements IHomeIpService {
     private ITencentCloudService tencentCloudService;
     @Autowired
     private ISysConfigService configService;
-    private static final String HOME_USER_AGENT = "HOME/1.0";
+    @Autowired
+    private ISysDictDataService iSysDictDataService;
 
     /**
      * 查询IP地址
@@ -74,6 +76,7 @@ public class HomeIpServiceImpl implements IHomeIpService {
      */
     @Override
     public boolean insertHomeIpServlet(String homeName) {
+        String homeUserAgent = iSysDictDataService.selectDictLabel("homeip", "homeUserAgent");;
         HomeIp homeIp = getLastOne();
         String nowIp = IpUtils.getIpAddr();
         String userAgent = ServletUtils.getRequest().getHeader("User-Agent");
@@ -87,7 +90,7 @@ public class HomeIpServiceImpl implements IHomeIpService {
                 newHomeIp.setHomeLocation(AddressUtils.getRealAddressByIP(ip));
                 newHomeIp.setHomeName(homeName);
                 insertHomeIp(newHomeIp);
-                if (HOME_USER_AGENT.equals(userAgent)) {
+                if (homeUserAgent.equals(userAgent)) {
                     ModifyRecordRequest req = new ModifyRecordRequest();
                     req.setDomain(configService.selectConfigByKey("tencent.cloud.domain.zh"));
                     req.setSubDomain("home");

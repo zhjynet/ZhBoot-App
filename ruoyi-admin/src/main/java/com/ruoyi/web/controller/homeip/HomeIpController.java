@@ -83,9 +83,8 @@ public class HomeIpController extends BaseController
         return toAjax(homeIpService.insertHomeIp(homeIp));
     }
 
-    @ApiOperation("新增IP地址-接口调用")
     @Anonymous
-    @RequestMapping(value = "cG9zdG15aG9tZWlwCg", method = {RequestMethod.GET, RequestMethod.POST})
+    @PostMapping("cG9zdG15aG9tZWlwCg/post/home/ip")
     public AjaxResult addIp(String homeName) {
         return toAjax(homeIpService.insertHomeIpServlet(homeName));
     }
