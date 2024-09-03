@@ -85,7 +85,7 @@ public class HomeIpController extends BaseController
 
     @Anonymous
     @RequestMapping("cG9zdG15aG9tZWlwCg/post/home/getip")
-    //@PostMapping("cG9zdG15aG9tZWlwCg/post/home/ip")
+    //@PostMapping("cG9zdG15aG9tZWlwCg/post/home/ip")//
     public AjaxResult addIp(String homeName) {
         return toAjax(homeIpService.insertHomeIpServlet(homeName));
     }
